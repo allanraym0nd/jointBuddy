@@ -1,14 +1,17 @@
 import { useState } from 'react'
-
+import Header from './components/common/Header'
 
 
 function App() {
   
   return (
-    <>
-      <h1>hey, where would you like to eat ? </h1>
-    </>
+      <div className="h-screen flex flex-col">
+      <Header />
+      </div>
+  
   )
 }
 
 export default App
+
+
