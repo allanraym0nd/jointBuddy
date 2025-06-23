@@ -1,21 +1,33 @@
 import LoadingSpinner from "../common/LoadingSpinner";
 import { useState, useEffect } from "react";
+import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 
 const MapContainer = () => {
-    const[isLoading,setIsLoading]= useState(true); 
+ 
+    const { map, loading, error, mapCallbackRef } = useGoogleMaps()
 
- useEffect(() =>{
-setTimeout(()=> setIsLoading(false), 2000)
- },[])
 
-    if(isLoading){
+    if(loading){
         return (
             <LoadingSpinner size='lg'/>
         )
     }
 
+    if(error) {
+      return (
+      <div className="text-red-500">Error: {error}</div>
+      )
+    }
+
+    
+
    return (
-    <div className="w-full h-full bg-blue-50 flex items-center justify-center"> 
+    <div className="w-full h-full relative"> 
+    <div 
+    ref={mapCallbackRef}
+    className="w-full h-full"
+    style={{minHeight: '400px'}}
+    />
     </div>
   )
 }
