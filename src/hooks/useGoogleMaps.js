@@ -1,5 +1,5 @@
 // src/hooks/useGoogleMaps.js
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Loader } from '@googlemaps/js-api-loader'
 
 export const useGoogleMaps = (options = {}) => {
@@ -17,15 +17,22 @@ export const useGoogleMaps = (options = {}) => {
     ...options
   }
 
-  const mapCallbackRef = (element) => {
+  const mapCallbackRef = useCallback((element) => {
+    console.log('🔍 mapCallbackRef called with:', element)
     if (element) {
-      console.log('📍 Map container element received')
+      console.log('📍 Map container element received, setting mapContainer')
       setMapContainer(element)
+    } else {
+      console.log('❌ Element is null/undefined')
     }
-  }
+  }, [])
 
   useEffect(() => {
-    if (!mapContainer) return
+    console.log('🎯 useEffect triggered, mapContainer:', mapContainer)
+    if (!mapContainer) {
+      console.log('⚠️ No mapContainer, returning early')
+      return
+    }
 
     const initializeMap = async () => {
       try {
@@ -46,13 +53,26 @@ export const useGoogleMaps = (options = {}) => {
         })
 
         const google = await loader.load()
+        console.log('✅ Google Maps API loaded')
+        
         const mapInstance = new google.maps.Map(mapContainer, defaultOptions)
+        console.log('🗺️ Map instance created')
 
+        // Wait for map to be ready
         google.maps.event.addListenerOnce(mapInstance, 'idle', () => {
+          console.log('🎯 Map is idle and ready')
           setMap(mapInstance)
           setLoading(false)
-          console.log('🗺️ Google Maps loaded successfully!')
         })
+
+        // Fallback timeout in case 'idle' event doesn't fire
+        setTimeout(() => {
+          if (loading) {
+            console.log('⏰ Timeout reached, setting map anyway')
+            setMap(mapInstance)
+            setLoading(false)
+          }
+        }, 5000)
 
       } catch (err) {
         console.error('Failed to load Google Maps:', err)
@@ -67,10 +87,14 @@ export const useGoogleMaps = (options = {}) => {
     return () => {
       if (map) {
         console.log('🧹 Cleaning up Google Maps')
-        google.maps.event.clearInstanceListeners(map)
+        try {
+          window.google?.maps?.event?.clearInstanceListeners(map)
+        } catch (e) {
+          console.warn('Cleanup warning:', e)
+        }
       }
     }
-  }, [mapContainer])
+  }, [mapContainer]) // Keep dependency on mapContainer
 
   return { map, loading, error, mapCallbackRef }
 }
