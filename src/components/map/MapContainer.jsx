@@ -50,7 +50,7 @@ const MapContainer = () => {
       <div 
         ref={mapCallbackRef}
         className="w-full h-full"
-        style={{minHeight: '400px'}}
+        style={{minHeight: '401px'}}
       />
     </div>
   )
