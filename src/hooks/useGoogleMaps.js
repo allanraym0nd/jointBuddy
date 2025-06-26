@@ -2,14 +2,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Loader } from '@googlemaps/js-api-loader'
 
-export const useGoogleMaps = (options = {}) => {
+export const useGoogleMaps = (userLocation, options = {}) => {
   const [map, setMap] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [mapContainer, setMapContainer] = useState(null)
 
+  const mapCenter = userLocation || {lat: 47.6062, lng: -122.3321}
+
   const defaultOptions = {
-    center: { lat: 47.6062, lng: -122.3321 },
+    center: mapCenter,
     zoom: 13,
     mapTypeControl: false,
     streetViewControl: false,
@@ -62,7 +64,7 @@ export const useGoogleMaps = (options = {}) => {
     }
 
     initializeMap()
-  }, [mapContainer, loading])
+  }, [mapContainer, loading, userLocation])
 
   return { map, loading, error, mapCallbackRef }
 }
