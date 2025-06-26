@@ -10,7 +10,7 @@ const MapContainer = () => {
         <div className="text-red-500 text-center">
           <p>Error loading map: {error}</p>
           <button 
-            onClick={() => window.location.reload()} 
+            onClick={() => window.location.reload()} // refresh button
             className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
             Retry
