@@ -1,10 +1,12 @@
 import LoadingSpinner from "../common/LoadingSpinner";
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
+import { useLocation } from "react-router-dom";
 
 const MapContainer = () => {
-  const { map, loading, error, mapCallbackRef } = useGoogleMaps()
+  const {location, loading: locationLoading , error: locationError,getCurrentLocation} = useLocation()
+  const { map, loading:mapLoading, error:mapError, mapCallbackRef } = useGoogleMaps(location)
 
-  if (error) {
+  if (mapError) {
     return (
       <div className="w-full h-full flex items-center justify-center min-h-[400px]">
         <div className="text-red-500 text-center">
@@ -20,9 +22,10 @@ const MapContainer = () => {
     )
   }
 
+
   return (
     <div className="w-full h-full relative"> 
-      {loading && (
+      {mapLoading || locationLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
           <LoadingSpinner size='lg'/>
         </div>
@@ -32,6 +35,20 @@ const MapContainer = () => {
         className="w-full h-full"
         style={{minHeight: '400px'}}
       />
+
+      {locationError && (
+        <div className="absolute top-4 left-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 rounded">
+          <div className="flex justify-between items-center">
+            <span>📍 {locationError}</span>
+            <button 
+              onClick={getCurrentLocation}
+              className="text-blue-600 hover:text-blue-800 underline text-sm"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
