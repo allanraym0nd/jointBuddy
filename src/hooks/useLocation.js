@@ -18,7 +18,37 @@ export const useLocation =()=> {
             return
         }
 
-        navigator.geolocation
+        navigator.geolocation.getCurrentPosition(
+            //success callback
+            (position) => {
+                const {latitude, longitude} =position.coords
+                setLocation({lat: latitude, lng: longitude})
+                setLoading(false)
+                console.log('Location Detected', {latitude, longitude})
+            },
+
+            (error) =>{
+            let errorMessage = 'Could not find location'
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                errorMessage = 'Location Denied by user'
+                break
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'Location Information Unavailable'
+                    break
+                case error.TIMEOUT:
+                    errorMessage = 'Location request timeout'
+                
+
+
+            }
+            
+
+
+            }
+        )
+ 
+    
     }
 
 }
