@@ -39,17 +39,33 @@ export const useLocation =()=> {
                 case error.TIMEOUT:
                     errorMessage = 'Location request timeout'
                     break
-                
-
-
-            }
             
 
-
             }
+            setError(errorMessage)
+            setLocation(defaultLocation)
+            setLoading(false)
+
+            },
+            {
+
+            timeout:1000,
+            maximumAge:300000,
+            enableHighAccuracy: true
+            }
+
         )
  
-    
     }
+
+    const clearError = () => {
+        setError(null)
+    }
+
+    useEffect(()=> {
+        getCurrentLocation()
+    },[])
+
+    return{error,location,loading}
 
 }
