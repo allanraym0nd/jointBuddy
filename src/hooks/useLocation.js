@@ -38,6 +38,7 @@ export const useLocation =()=> {
                     break
                 case error.TIMEOUT:
                     errorMessage = 'Location request timeout'
+                    break
                 
 
 
