@@ -9,7 +9,7 @@ export const useLocation =()=> {
 
     const getCurrentLocation = () =>{
         setLoading(true)
-        setError(null)
+        setError(null) 
     
         if(!navigator.geolocation) {
             setError('Browser does not support automatic detection')
@@ -69,3 +69,6 @@ export const useLocation =()=> {
     return{error,location,loading}
 
 }
+
+
+//recenter map
