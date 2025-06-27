@@ -2,6 +2,7 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import { useEffect } from "react";
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import { useLocation } from "../../hooks/useLocation";
+import { LocationButton } from "./LocationButton";
 
 const MapContainer = () => {
   const {location, loading: locationLoading , error: locationError,getCurrentLocation} = useLocation()
@@ -46,7 +47,13 @@ const MapContainer = () => {
         style={{minHeight: '400px'}}
       />
 
-      {locationError && (
+     <LocationButton 
+     locationLoading={locationLoading}
+     locationError={locationError}
+     onLocationRequest={getCurrentLocation}
+     />
+
+      {/* {locationError && (
         <div className="absolute top-4 left-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 rounded">
           <div className="flex justify-between items-center">
             <span>📍 {locationError}</span>
@@ -58,7 +65,7 @@ const MapContainer = () => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   )
 }
