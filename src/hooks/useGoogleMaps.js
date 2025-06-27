@@ -8,7 +8,10 @@ export const useGoogleMaps = (userLocation, options = {}) => {
   const [error, setError] = useState(null)
   const [mapContainer, setMapContainer] = useState(null)
 
-  const mapCenter = userLocation || {lat: 47.6062, lng: -122.3321}
+  const mapCenter = userLocation || {lat: 47.6062, lng: -122.3321} 
+
+  //  userLocation is just whatever we pass in from MapContainer - useLocation(location)
+  // userLocation = location --- not sure i understood this
 
   const defaultOptions = {
     center: mapCenter,
