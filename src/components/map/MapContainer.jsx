@@ -1,10 +1,20 @@
 import LoadingSpinner from "../common/LoadingSpinner";
+import { useEffect } from "react";
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "../../hooks/useLocation";
 
 const MapContainer = () => {
   const {location, loading: locationLoading , error: locationError,getCurrentLocation} = useLocation()
   const { map, loading:mapLoading, error:mapError, mapCallbackRef } = useGoogleMaps(location)
+
+  // center the map where the user is
+
+  useEffect(()=> {
+    if(map && location){
+      map.panTo(location);
+    }
+
+  },[map, location])
 
   if (mapError) {
     return (
@@ -42,7 +52,7 @@ const MapContainer = () => {
             <span>📍 {locationError}</span>
             <button 
               onClick={getCurrentLocation}
-              className="text-blue-600 hover:text-blue-800 underline text-sm"
+              className="text-blue-600 hover:text-blue-800 text-sm"
             >
               Try Again
             </button>
