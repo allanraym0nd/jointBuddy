@@ -14,7 +14,7 @@ const handleClick = () => {
     const getButtonContent = () => {
       if(locationLoading){
         return {
-        text: '🤪😭 fetching location',
+        text: '⏳ fetching location',
         disabled:true,
         className: "bg-blue-500 text-white cursor-not-allowed opacity-75"
         }

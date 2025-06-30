@@ -58,9 +58,9 @@ export const useLocation =()=> {
  
     }
 
-    // const clearError = () => {
-    //     setError(null)
-    // }
+    const clearError = () => {
+        setError(null)
+    }
 
     useEffect(()=> {
         getCurrentLocation()
