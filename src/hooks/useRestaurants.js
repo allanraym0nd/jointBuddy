@@ -1,4 +1,3 @@
-// src/hooks/useRestaurants.js
 import { useState, useEffect } from 'react'
 
 export const useRestaurants = (userLocation) => {
@@ -6,7 +5,7 @@ export const useRestaurants = (userLocation) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  // Mock restaurant data template
+
   const restaurantTypes = [
     { name: "Pizza Palace", cuisine: "Italian", rating: 4.2, priceLevel: 2 },
     { name: "Burger Barn", cuisine: "American", rating: 4.0, priceLevel: 2 },
@@ -20,36 +19,36 @@ export const useRestaurants = (userLocation) => {
     { name: "Pasta Paradise", cuisine: "Italian", rating: 4.0, priceLevel: 2 }
   ]
 
-  // Function to generate random coordinates near user location
   const generateNearbyCoordinates = (centerLat, centerLng, radiusInMiles = 1) => {
-    // Convert miles to degrees (rough approximation)
-    const radiusInDegrees = radiusInMiles / 69 // 1 degree ≈ 69 miles
+   
+    const radiusInDegrees = radiusInMiles / 69 
     
-    // Generate random angle and distance
     const angle = Math.random() * 2 * Math.PI
     const distance = Math.random() * radiusInDegrees
     
-    // Calculate new coordinates
+ 
     const lat = centerLat + (distance * Math.cos(angle))
     const lng = centerLng + (distance * Math.sin(angle))
     
-    return { lat, lng }
+    return { lat, lng } // random coordinates near users location
   }
 
-  // Function to calculate distance between two points
+
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
-    const R = 3959 // Earth's radius in miles
-    const dLat = (lat2 - lat1) * Math.PI / 180
+    const R = 3959 
+    // converts the differences in latitude and longitude from degrees to radians.
+    const dLat = (lat2 - lat1) * Math.PI / 180 
     const dLng = (lng2 - lng1) * Math.PI / 180
+    // intermediate value
     const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
               Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLng/2) * Math.sin(dLng/2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-    const distance = R * c
+              Math.sin(dLng/2) * Math.sin(dLng/2) 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) 
+    const distance = R * c // gives us distance btn the 2 cordinates
     return Math.round(distance * 10) / 10 // Round to 1 decimal
   }
 
-  // Generate mock restaurants
+  
   const generateMockRestaurants = (userLat, userLng) => {
     return restaurantTypes.map((template, index) => {
       const coordinates = generateNearbyCoordinates(userLat, userLng)
@@ -81,7 +80,6 @@ export const useRestaurants = (userLocation) => {
     setLoading(true)
     setError(null)
 
-    // Simulate API delay
     setTimeout(() => {
       try {
         const mockRestaurants = generateMockRestaurants(
@@ -89,7 +87,6 @@ export const useRestaurants = (userLocation) => {
           userLocation.lng
         )
         
-        // Sort by distance (closest first)
         const sortedRestaurants = mockRestaurants.sort((a, b) => a.distance - b.distance)
         
         setRestaurants(sortedRestaurants)
@@ -99,7 +96,7 @@ export const useRestaurants = (userLocation) => {
         setError('Failed to load restaurants')
         setLoading(false)
       }
-    }, 1000) // 1 second delay to simulate API call
+    }, 1000) // 1 second delay 
 
   }, [userLocation])
 
