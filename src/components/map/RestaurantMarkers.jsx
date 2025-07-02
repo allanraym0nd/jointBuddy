@@ -14,5 +14,6 @@ const RestaurantMarkers = ({restaurants, map, onRestaurantClick}) => {
         />
      })}
      </>
+   
     )
 }
