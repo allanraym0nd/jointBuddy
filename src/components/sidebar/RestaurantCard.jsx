@@ -1,4 +1,4 @@
-const RestaurantCard = ({onClick, restaurant}) => {
+const RestaurantCard = ({onClick, restaurant, isSelected}) => {
     const handleClick = () =>{
         onClick(restaurant)
     }
