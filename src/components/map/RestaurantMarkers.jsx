@@ -3,7 +3,7 @@ import RestaurantMarker from "./RestaurantMarker";  // ← Fixed import
 const RestaurantMarkers = ({restaurants, map, onRestaurantClick}) => {
     return (
         <>
-         {restaurants.map((restaurant) => (  // ← Added parentheses for implicit return
+         {restaurants.map((restaurant) => (  
             <RestaurantMarker 
                 onMarkerClick={onRestaurantClick}
                 restaurant={restaurant}
