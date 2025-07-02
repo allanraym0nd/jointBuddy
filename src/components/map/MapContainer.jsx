@@ -4,6 +4,7 @@ import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import { useLocation } from "../../hooks/useLocation";
 import { useRestaurants } from "../../hooks/useRestaurants";
 import { LocationButton } from "./LocationButton";
+import { RestaurantMarkers } from "./RestaurantMarker";
 
 const MapContainer = () => {
   const {location, loading: locationLoading , error: locationError,getCurrentLocation} = useLocation()
@@ -21,6 +22,10 @@ const MapContainer = () => {
     }
 
   },[map, location])
+
+  const onRestaurantClick = (restaurant) => {
+    console.log('Clicked Restarant !', restaurant.name)
+  }
 
   if (mapError) {
     return (
@@ -57,6 +62,14 @@ const MapContainer = () => {
      locationError={locationError}
      onLocationRequest={getCurrentLocation}
      />
+
+     {map && restaurants.length > 0 (
+      <RestaurantMarkers
+      restaurants={restaurants}
+      map={map}
+      onRestaurantClick = {onRestaurantClick}
+      />
+     )}
 
      {restaurantsLoading && (
         <div className="absolute top-4 left-4 bg-blue-100 border border-blue-400 text-blue-700 px-3 py-2 rounded z-10">
