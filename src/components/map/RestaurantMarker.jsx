@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 
-
-export const RestaurantMarker = (map,restaurant, onMarkerClick) => {
+ const RestaurantMarker = (map,restaurant, onMarkerClick) => {
 
 
 useEffect(() => {
@@ -51,3 +50,5 @@ useEffect(() => {
 
  
 }
+
+export default RestaurantMarker;
