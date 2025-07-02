@@ -63,13 +63,13 @@ const MapContainer = () => {
      onLocationRequest={getCurrentLocation}
      />
 
-     {/* {map && restaurants.length > 0 (
+     {map && restaurants.length > 0 && (
       <RestaurantMarkers
       restaurants={restaurants}
       map={map}
       onRestaurantClick = {onRestaurantClick}
       />
-     )} */}
+     )}
 
      {restaurantsLoading && (
         <div className="absolute top-4 left-4 bg-blue-100 border border-blue-400 text-blue-700 px-3 py-2 rounded z-10">
