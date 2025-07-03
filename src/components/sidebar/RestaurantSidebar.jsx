@@ -1,7 +1,7 @@
 
 import RestaurantCard from './RestaurantCard'
 
-const RestaurantSidebar = ({ restaurants, onRestaurantClick, selectedRestaurantId }) => {
+const RestaurantSidebar = ({ restaurants, onRestaurantClick, selectedRestaurantId,map }) => {
   return (
     <div className="w-96 h-full bg-white flex flex-col shadow-lg">
       
@@ -23,6 +23,7 @@ const RestaurantSidebar = ({ restaurants, onRestaurantClick, selectedRestaurantI
             restaurant={restaurant}
             onClick={onRestaurantClick}
             isSelected={selectedRestaurantId === restaurant.id}
+            map={map}
           />
         ))}
       </div>
