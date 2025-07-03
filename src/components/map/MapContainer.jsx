@@ -5,7 +5,7 @@ import { useLocation } from "../../hooks/useLocation";
 import { useRestaurants } from "../../hooks/useRestaurants";
 import { LocationButton } from "./LocationButton";
 import RestaurantMarkers from "./RestaurantMarkers";
-import RestaurantSidebar from "../sidebar/RestaurantSideBar";
+import RestaurantSidebar from "../sidebar/RestaurantSidebar";
 
 const MapContainer = () => {
  const { location, loading: locationLoading, error: locationError, getCurrentLocation } = useLocation()
@@ -30,6 +30,18 @@ const MapContainer = () => {
    console.log('Clicked Restaurant!', restaurant.name)
    setSelectedRestaurantId(restaurant.id)
  }
+
+ setTimeout (() => {
+
+ const cardElement = document.getElementById(`restaurant-card-${restaurants.id}`)
+ if(cardElement){
+  cardElement.scrollIntoView({
+    behavior:'smooth',
+    block:'center'
+  })
+ }
+
+}, 100)
 
  if (mapError) {
    return (
@@ -117,9 +129,10 @@ const MapContainer = () => {
      </div>
 
          <RestaurantSidebar
-       restaurants={restaurants}
-       onRestaurantClick={onRestaurantClick}
-       selectedRestaurantId={selectedRestaurantId}
+          restaurants={restaurants}
+          onRestaurantClick={onRestaurantClick}
+          selectedRestaurantId={selectedRestaurantId}
+          map={map}
      />
    </div>
  )
