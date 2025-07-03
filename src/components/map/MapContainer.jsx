@@ -26,6 +26,16 @@ const MapContainer = () => {
         maxDistance:5
  })
 
+  const filteredRestaurants = restaurants.filter(restaurant => {
+        // const matchesSearch = searchQuery = 
+
+        const matchesCuisine = filters.cuisine === 'all' || restaurant.cuisine === filter.cuisine
+      
+        
+
+
+  })
+
  // center the map where the user is
  useEffect(() => {
    if (map && location) {
