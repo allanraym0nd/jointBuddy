@@ -18,6 +18,13 @@ const MapContainer = () => {
  } = useRestaurants(location)
 
  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null)
+ const [searchQuery, setSearchQuery] = useState(null)
+ const [filters,setFilters] =useState ({
+        cuisine:'all',
+        priceLevel: 'all',
+        rating:0,
+        maxDistance:5
+ })
 
  // center the map where the user is
  useEffect(() => {
@@ -29,11 +36,11 @@ const MapContainer = () => {
  const onRestaurantClick = (restaurant) => {
    console.log('Clicked Restaurant!', restaurant.name)
    setSelectedRestaurantId(restaurant.id)
- }
+ 
 
  setTimeout (() => {
 
- const cardElement = document.getElementById(`restaurant-card-${restaurants.id}`)
+ const cardElement = document.getElementById(`restaurant-card-${restaurant.id}`)
  if(cardElement){
   cardElement.scrollIntoView({
     behavior:'smooth',
@@ -42,6 +49,8 @@ const MapContainer = () => {
  }
 
 }, 100)
+
+ }
 
  if (mapError) {
    return (
