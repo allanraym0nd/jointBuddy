@@ -1,11 +1,18 @@
 // src/components/sidebar/RestaurantCard.jsx
-const RestaurantCard = ({ restaurant, onClick, isSelected }) => {
+const RestaurantCard = ({ restaurant, onClick, isSelected, map }) => {
   const handleClick = () => {
     onClick(restaurant)
   }
 
+  if (map && restaurant.coordinates) {
+    map.panTo(restaurant.coordinates)
+    map.setZoom(16)
+
+  }
+
   return (
     <div 
+      id={`restaurant-card-${restaurant.id}`}
       className={`bg-white rounded-xl shadow-md mb-4 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg overflow-hidden ${
         isSelected ? 'ring-2 ring-blue-500' : ''
       }`}
