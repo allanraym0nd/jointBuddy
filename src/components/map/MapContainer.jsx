@@ -6,6 +6,7 @@ import { useRestaurants } from "../../hooks/useRestaurants";
 import { LocationButton } from "./LocationButton";
 import RestaurantMarkers from "./RestaurantMarkers";
 import RestaurantSidebar from "../sidebar/RestaurantSidebar";
+import SearchBar from "../common/SearchBar";
 
 const MapContainer = () => {
  const { location, loading: locationLoading, error: locationError, getCurrentLocation } = useLocation()
@@ -18,7 +19,7 @@ const MapContainer = () => {
  } = useRestaurants(location)
 
  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null)
- const [searchQuery, setSearchQuery] = useState(null)
+ const [searchQuery, setSearchQuery] = useState('')
  const [filters,setFilters] =useState ({
         cuisine:'all',
         priceLevel: 'all',
@@ -27,18 +28,18 @@ const MapContainer = () => {
  })
 
   const filteredRestaurants = restaurants.filter(restaurant => {
-       const matchesSearch = searchQuery === '' || restaurant.name.toLowerCase().includes(searchQuery.toLowerCase())
-                                                || restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase())
-
-
+    const matchesSearch = !searchQuery || searchQuery === '' || 
+      restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase())
+    
         const matchesCuisine = filters.cuisine === 'all' || restaurant.cuisine === filters.cuisine
-        const matchesRating = restaurant.rating >= filters.rating 
+        const matchesRating = restaurant.rating >= filters.rating
+        const matchesPrice = filters.priceLevel === 'all' || restaurant.priceLevel <= filters.priceLevel
         const matchesDistance = restaurant.distance <= filters.maxDistance
-        const matchespriceLevel = filters.priceLevel === 'all' || restaurant.cuisine === filters.priceLevel
-      
-        
-
-
+  
+    // ... other filter logic
+    
+    return matchesSearch && matchesCuisine && matchesRating && matchesPrice && matchesDistance
   })
 
  // center the map where the user is
@@ -157,11 +158,6 @@ const MapContainer = () => {
           onRestaurantClick={onRestaurantClick}
           selectedRestaurantId={selectedRestaurantId}
           map={map}
-     />
-
-     <SearchBar 
-     searchQuery = {searchQuery}
-     setSearchQuery = {setSearchQuery}
      />
    </div>
  )
