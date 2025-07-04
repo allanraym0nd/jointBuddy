@@ -27,9 +27,14 @@ const MapContainer = () => {
  })
 
   const filteredRestaurants = restaurants.filter(restaurant => {
-        // const matchesSearch = searchQuery = 
+       const matchesSearch = searchQuery === '' || restaurant.name.toLowerCase().includes(searchQuery.toLowerCase())
+                                                || restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase())
 
-        const matchesCuisine = filters.cuisine === 'all' || restaurant.cuisine === filter.cuisine
+
+        const matchesCuisine = filters.cuisine === 'all' || restaurant.cuisine === filters.cuisine
+        const matchesRating = restaurant.rating >= filters.rating 
+        const matchesDistance = restaurant.distance <= filters.maxDistance
+        const matchespriceLevel = filters.priceLevel === 'all' || restaurant.cuisine === filters.priceLevel
       
         
 
@@ -80,7 +85,7 @@ const MapContainer = () => {
 
  return (
    <div className="flex h-screen">
-     {/* Sidebar - Left side */}
+    
 
      {/* Map section - Right side */}
      <div className="flex-1 relative">
@@ -104,7 +109,7 @@ const MapContainer = () => {
 
        {map && restaurants.length > 0 && (
          <RestaurantMarkers
-           restaurants={restaurants}
+           restaurants={filteredRestaurants}
            map={map}
            onRestaurantClick={onRestaurantClick}
          />
@@ -148,10 +153,15 @@ const MapContainer = () => {
      </div>
 
          <RestaurantSidebar
-          restaurants={restaurants}
+          restaurants={filteredRestaurants}
           onRestaurantClick={onRestaurantClick}
           selectedRestaurantId={selectedRestaurantId}
           map={map}
+     />
+
+     <SearchBar 
+     searchQuery = {searchQuery}
+     setSearchQuery = {setSearchQuery}
      />
    </div>
  )
