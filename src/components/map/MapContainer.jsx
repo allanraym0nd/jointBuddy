@@ -85,82 +85,84 @@ const MapContainer = () => {
  }
 
  return (
-   <div className="flex h-screen">
-    
+  <div className="flex flex-col h-screen">
+      {/* Integrated Header */}
+      <header className="bg-white px-6 py-4 shadow-lg flex items-center justify-between">
+        <div className="flex items-center gap-2 text-2xl font-bold text-red-500">
+          🍔jointBuddy
+        </div>
+        
+        <SearchBar 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+        
+        <div className="flex items-center gap-4">
+          <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2">
+            📍 Set Location
+          </button>
+        </div>
+      </header>
 
-     {/* Map section - Right side */}
-     <div className="flex-1 relative">
-       {(mapLoading || locationLoading) && (
-         <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
-           <LoadingSpinner size='lg' />
-         </div>
-       )}
+      {/* Map and Sidebar */}
+      <div className="flex flex-1">
+        {/* Map section - Left side */}
+        <div className="flex-1 relative">
+          {(mapLoading || locationLoading) && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
+              <LoadingSpinner size='lg' />
+            </div>
+          )}
 
-       <div
-         ref={mapCallbackRef}
-         className="w-full h-full"
-         style={{ minHeight: '400px' }}
-       />
+          <div
+            ref={mapCallbackRef}
+            className="w-full h-full"
+            style={{ minHeight: '400px' }}
+          />
 
-       <LocationButton
-         locationLoading={locationLoading}
-         locationError={locationError}
-         onLocationRequest={getCurrentLocation}
-       />
+          <LocationButton
+            locationLoading={locationLoading}
+            locationError={locationError}
+            onLocationRequest={getCurrentLocation}
+          />
 
-       {map && restaurants.length > 0 && (
-         <RestaurantMarkers
-           restaurants={filteredRestaurants}
-           map={map}
-           onRestaurantClick={onRestaurantClick}
-         />
-       )}
+          {map && restaurants.length > 0 && (
+            <RestaurantMarkers
+              restaurants={filteredRestaurants}
+              map={map}
+              onRestaurantClick={onRestaurantClick}
+            />
+          )}
 
-       {restaurantsLoading && (
-         <div className="absolute top-4 left-4 bg-blue-100 border border-blue-400 text-blue-700 px-3 py-2 rounded z-10">
-           🔄 Finding restaurants nearby...
-         </div>
-       )}
+          {restaurantsLoading && (
+            <div className="absolute top-4 left-4 bg-blue-100 border border-blue-400 text-blue-700 px-3 py-2 rounded z-10">
+              🔄 Finding restaurants nearby...
+            </div>
+          )}
 
-       {/* Restaurant Error */}
-       {restaurantsError && (
-         <div className="absolute top-4 left-4 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded z-10">
-           ❌ {restaurantsError}
-         </div>
-       )}
+          {restaurantsError && (
+            <div className="absolute top-4 left-4 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded z-10">
+              ❌ {restaurantsError}
+            </div>
+          )}
 
-       {/* Restaurant Count (for debugging) */}
-       {restaurants.length > 0 && (
-         <div className="absolute top-4 left-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded z-10">
-           🍽️ Found {restaurants.length} restaurants nearby
-         </div>
-       )}
+          {restaurants.length > 0 && (
+            <div className="absolute top-4 left-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded z-10">
+              🍽️ Found {restaurants.length} restaurants nearby
+            </div>
+          )}
+        </div>
 
-       {restaurants.length > 0 && console.log('🍽️ Restaurant data:', restaurants)}
-
-       {/* {locationError && (
-         <div className="absolute top-4 left-4 right-4 bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 rounded">
-           <div className="flex justify-between items-center">
-             <span>📍 {locationError}</span>
-             <button
-               onClick={getCurrentLocation}
-               className="text-blue-600 hover:text-blue-800 text-sm"
-             >
-               Try Again
-             </button>
-           </div>
-         </div>
-       )} */}
-     </div>
-
-         <RestaurantSidebar
+        {/* Sidebar - Right side */}
+        <RestaurantSidebar
           restaurants={filteredRestaurants}
           onRestaurantClick={onRestaurantClick}
           selectedRestaurantId={selectedRestaurantId}
           map={map}
-     />
-   </div>
- )
+        />
+      </div>
+    </div>
+  )
 }
 
 export default MapContainer;
