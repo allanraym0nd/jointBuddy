@@ -7,6 +7,7 @@ import { LocationButton } from "./LocationButton";
 import RestaurantMarkers from "./RestaurantMarkers";
 import RestaurantSidebar from "../sidebar/RestaurantSidebar";
 import SearchBar from "../common/SearchBar";
+import RestaurantDetailsModal from "../restaurants/RestaurantDetailsModal";
 
 const MapContainer = () => {
  const { location, loading: locationLoading, error: locationError, getCurrentLocation } = useLocation()
@@ -20,6 +21,8 @@ const MapContainer = () => {
 
  const [selectedRestaurantId, setSelectedRestaurantId] = useState(null)
  const [searchQuery, setSearchQuery] = useState('')
+ const [selectedRestaurant, setSelectedRestaurant] = useState(null)
+ const [isModalOpen, setIsModalOpen] = useState(false)
  const [filters,setFilters] =useState ({
         cuisine:'all',
         priceLevel: 'all',
@@ -52,6 +55,8 @@ const MapContainer = () => {
  const onRestaurantClick = (restaurant) => {
    console.log('Clicked Restaurant!', restaurant.name)
    setSelectedRestaurantId(restaurant.id)
+   setSelectedRestaurant(restaurant)
+   setIsModalOpen(true)
  
 
  setTimeout (() => {
@@ -159,6 +164,12 @@ const MapContainer = () => {
           onRestaurantClick={onRestaurantClick}
           selectedRestaurantId={selectedRestaurantId}
           map={map}
+        />
+
+        <RestaurantDetailsModal  
+        isOpen={isModalOpen}
+        restaurant={selectedRestaurant}
+        onClose={()=>  setIsModalOpen(false)}
         />
       </div>
     </div>
