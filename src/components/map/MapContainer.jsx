@@ -76,7 +76,7 @@ const MapContainer = () => {
  if (mapError) {
    return (
      <div className="w-full h-full flex items-center justify-center min-h-[400px]">
-       <div className="text-red-500 text-center">
+       <div className="text-orange-500 text-center">
          <p>Error loading map: {mapError}</p>
          <button
            onClick={() => window.location.reload()} // refresh button
