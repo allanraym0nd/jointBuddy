@@ -114,7 +114,7 @@ const MapContainer = () => {
 
 
      {/* Map and Sidebar */}
-     <div className="flex flex-1">
+     <div className="flex flex-1 overflow-hidden">
        {/* Map section - Left side */}
        <div className="flex-1 relative">
 
@@ -123,7 +123,7 @@ const MapContainer = () => {
            selectedCuisine={filters.cuisine}
            onCuisineChange={(cuisine) => setFilters(prev => ({ ...prev, cuisine }))} 
          />
-         
+
          {(mapLoading || locationLoading) && (
            <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
              <LoadingSpinner size='lg' />
