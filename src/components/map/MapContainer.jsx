@@ -169,7 +169,10 @@ const MapContainer = () => {
         <RestaurantDetailsModal  
         isOpen={isModalOpen}
         restaurant={selectedRestaurant}
-        onClose={()=>  setIsModalOpen(false)}
+        onClose={()=> { 
+          setIsModalOpen(false) 
+          setSelectedRestaurant(null)}}
+          map={map}
         />
       </div>
     </div>
