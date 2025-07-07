@@ -1,4 +1,5 @@
 import LoadingSpinner from "../common/LoadingSpinner";
+import { MapPin } from 'lucide-react'
 import { useEffect, useState } from "react";
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import { useLocation } from "../../hooks/useLocation";
@@ -8,6 +9,7 @@ import RestaurantMarkers from "./RestaurantMarkers";
 import RestaurantSidebar from "../sidebar/RestaurantSidebar";
 import SearchBar from "../common/SearchBar";
 import RestaurantDetailsModal from "../restaurants/RestaurantDetailsModal";
+import FilterBar from "../filters/FilterBar";
 
 const MapContainer = () => {
  const { location, loading: locationLoading, error: locationError, getCurrentLocation } = useLocation()
@@ -90,93 +92,105 @@ const MapContainer = () => {
  }
 
  return (
-  <div className="flex flex-col h-screen">
-      {/* Integrated Header */}
-      <header className="bg-white px-6 py-4 shadow-lg flex items-center justify-between">
-        <div className="flex items-center gap-2 text-2xl font-bold text-red-500">
-          🍔jointBuddy
-        </div>
-        
-        <SearchBar 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
-        
-        <div className="flex items-center gap-4">
-          <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2">
-            📍 Set Location
-          </button>
-        </div>
-      </header>
+   <div className="flex flex-col h-screen">
+     {/* Header */}
+     <header className="bg-white px-6 py-4 shadow-lg flex items-center justify-between">
+       <div className="flex items-center gap-2 text-2xl font-bold text-red-500">
+         🍔jointBuddy
+       </div>
+       
+       <SearchBar 
+         searchQuery={searchQuery}
+         setSearchQuery={setSearchQuery}
+       />
+       
+       <div className="flex items-center gap-4">
+         <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2">
+           <MapPin className="w-4 h-4" />
+           Set Location
+         </button>
+       </div>
+     </header>
 
-      {/* Map and Sidebar */}
-      <div className="flex flex-1">
-        {/* Map section - Left side */}
-        <div className="flex-1 relative">
-          {(mapLoading || locationLoading) && (
-            <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
-              <LoadingSpinner size='lg' />
-            </div>
-          )}
 
-          <div
-            ref={mapCallbackRef}
-            className="w-full h-full"
-            style={{ minHeight: '400px' }}
-          />
+     {/* Map and Sidebar */}
+     <div className="flex flex-1">
+       {/* Map section - Left side */}
+       <div className="flex-1 relative">
 
-          <LocationButton
-            locationLoading={locationLoading}
-            locationError={locationError}
-            onLocationRequest={getCurrentLocation}
-          />
+        {/* Filter Bar - positioned inside map container */}
+         <FilterBar 
+           selectedCuisine={filters.cuisine}
+           onCuisineChange={(cuisine) => setFilters(prev => ({ ...prev, cuisine }))} 
+         />
+         
+         {(mapLoading || locationLoading) && (
+           <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
+             <LoadingSpinner size='lg' />
+           </div>
+         )}
 
-          {map && restaurants.length > 0 && (
-            <RestaurantMarkers
-              restaurants={filteredRestaurants}
-              map={map}
-              onRestaurantClick={onRestaurantClick}
-            />
-          )}
+         <div
+           ref={mapCallbackRef}
+           className="w-full h-full"
+           style={{ minHeight: '400px' }}
+         />
 
-          {restaurantsLoading && (
-            <div className="absolute top-4 left-4 bg-blue-100 border border-blue-400 text-blue-700 px-3 py-2 rounded z-10">
-              🔄 Finding restaurants nearby...
-            </div>
-          )}
+         <LocationButton
+           locationLoading={locationLoading}
+           locationError={locationError}
+           onLocationRequest={getCurrentLocation}
+         />
 
-          {restaurantsError && (
-            <div className="absolute top-4 left-4 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded z-10">
-              ❌ {restaurantsError}
-            </div>
-          )}
+         {map && restaurants.length > 0 && (
+           <RestaurantMarkers
+             restaurants={filteredRestaurants}
+             map={map}
+             onRestaurantClick={onRestaurantClick}
+           />
+         )}
 
-          {restaurants.length > 0 && (
-            <div className="absolute top-4 left-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded z-10">
-              🍽️ Found {restaurants.length} restaurants nearby
-            </div>
-          )}
-        </div>
+         {restaurantsLoading && (
+           <div className="absolute top-4 left-4 bg-blue-100 border border-blue-400 text-blue-700 px-3 py-2 rounded z-10">
+             🔄 Finding restaurants nearby...
+           </div>
+         )}
 
-        {/* Sidebar - Right side */}
-        <RestaurantSidebar
-          restaurants={filteredRestaurants}
-          onRestaurantClick={onRestaurantClick}
-          selectedRestaurantId={selectedRestaurantId}
-          map={map}
-        />
+         {restaurantsError && (
+           <div className="absolute top-4 left-4 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded z-10">
+             ❌ {restaurantsError}
+           </div>
+         )}
 
-        <RestaurantDetailsModal  
-        isOpen={isModalOpen}
-        restaurant={selectedRestaurant}
-        onClose={()=> { 
-          setIsModalOpen(false) 
-          setSelectedRestaurant(null)}}
-          map={map}
-        />
-      </div>
-    </div>
-  )
+         {restaurants.length > 0 && (
+           <div className="absolute top-4 left-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded z-10">
+             🍽️ Found {filteredRestaurants.length} restaurants nearby
+           </div>
+         )}
+       </div>
+
+       {/* Sidebar - Right side */}
+       <RestaurantSidebar
+         restaurants={filteredRestaurants}
+         onRestaurantClick={onRestaurantClick}
+         selectedRestaurantId={selectedRestaurantId}
+         map={map}
+       />
+     </div>
+
+     {/* Restaurant Details Modal */}
+     <RestaurantDetailsModal  
+       isOpen={isModalOpen}
+       restaurant={selectedRestaurant}
+       onClose={() => { 
+         setIsModalOpen(false) 
+         setSelectedRestaurant(null)
+         setSelectedRestaurantId(null)
+       }}
+       map={map}
+     />
+   </div>
+ )
 }
 
 export default MapContainer;
