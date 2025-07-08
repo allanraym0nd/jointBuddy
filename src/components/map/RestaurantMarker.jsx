@@ -47,4 +47,4 @@ const RestaurantMarker = ({ map, restaurant, onMarkerClick }) => {
   return null // React components must return something
 }
 
-export default RestaurantMarker
+export default RestaurantMarker;
