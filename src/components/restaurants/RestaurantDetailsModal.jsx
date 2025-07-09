@@ -72,7 +72,7 @@ const RestaurantDetailModal = ({ restaurant, isOpen, onClose }) => {
         onClick={handleClose}
       />
       
-      {/* Side Panel - SMALLER SIZE */}
+      {/* Side Panel*/}
       <div 
         className={`fixed top-0 right-0 h-full w-full md:w-80 lg:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-out z-50 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -98,7 +98,7 @@ const RestaurantDetailModal = ({ restaurant, isOpen, onClose }) => {
 
         {/* Scrollable content */}
         <div className="overflow-y-auto h-full pb-20">
-          {/* Header Image - SMALLER */}
+          {/* Header Image */}
           <div className="relative h-40 bg-gray-200 overflow-hidden">
             <img 
               src={restaurant.photoUrl} 
@@ -121,7 +121,7 @@ const RestaurantDetailModal = ({ restaurant, isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Content - TIGHTER SPACING */}
+          {/* Content */}
           <div className="p-4">
             {/* Restaurant Name & Basic Info */}
             <div className="mb-4">
