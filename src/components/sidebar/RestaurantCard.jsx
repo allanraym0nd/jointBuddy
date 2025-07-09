@@ -14,7 +14,8 @@ const RestaurantCard = ({ restaurant, onClick, isSelected, map }) => {
     <div 
       id={`restaurant-card-${restaurant.id}`}
       className={`bg-white rounded-xl shadow-md mb-4 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg overflow-hidden ${
-        isSelected ? 'ring-2 ring-blue-500' : ''
+        isSelected ? 'ring-2 ring-red-500 shadow-lg transform -translate-y-1' 
+        : 'shadow-md hover:shadow-xl'
       }`}
       onClick={handleClick}
     >
