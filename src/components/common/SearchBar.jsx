@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { X,Search } from "lucide-react";
 
 const SearchBar = ({ searchQuery, setSearchQuery }) => {
   const handleSearch = (e) => {
     e.preventDefault();
     console.log('Searching for...', searchQuery)
+  }
+
+  const handleClearSearch = () =>{
+       setSearchQuery('')
   }
 
   const handleKeyPress = (e) => {
@@ -26,6 +30,15 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={handleKeyPress}
           />
+              {searchQuery && (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </form>
     </div>
