@@ -42,17 +42,20 @@ const MapContainer = () => {
         const matchesPrice = filters.priceLevel === 'all' || restaurant.priceLevel <= filters.priceLevel
         const matchesDistance = restaurant.distance <= filters.maxDistance
   
-    // ... other filter logic
-    
     return matchesSearch && matchesCuisine && matchesRating && matchesPrice && matchesDistance
   })
 
  // center the map where the user is
- useEffect(() => {
-   if (map && location) {
-     map.panTo(location);
-   }
- }, [map, location])
+useEffect(() => {
+  if (map && location) {
+    map.panTo(location);
+
+    const timeout = setTimeout(() => {
+      map.setZoom(16);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }
+}, [map, location]);
 
  const onRestaurantClick = (restaurant) => {
    console.log('Clicked Restaurant!', restaurant.name)
@@ -60,9 +63,7 @@ const MapContainer = () => {
    setSelectedRestaurant(restaurant)
    setIsModalOpen(true)
  
-
  setTimeout (() => {
-
  const cardElement = document.getElementById(`restaurant-card-${restaurant.id}`)
  if(cardElement){
   cardElement.scrollIntoView({
@@ -70,9 +71,7 @@ const MapContainer = () => {
     block:'center'
   })
  }
-
 }, 100)
-
  }
 
  if (mapError) {
@@ -81,7 +80,7 @@ const MapContainer = () => {
        <div className="text-orange-500 text-center">
          <p>Error loading map: {mapError}</p>
          <button
-           onClick={() => window.location.reload()} // refresh button
+           onClick={() => window.location.reload()}
            className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
          >
            Retry
@@ -92,9 +91,9 @@ const MapContainer = () => {
  }
 
  return (
-   <div className="flex flex-col  h-screen">
-     {/* Header */}
-     <header className="bg-white px-6 py-4 shadow-lg flex items-center justify-between">
+   <div className="flex flex-col h-screen">
+     {/* Header - Fixed height */}
+     <header className="bg-white px-6 py-4 shadow-lg flex items-center justify-between flex-shrink-0">
        <div className="flex items-center gap-2 text-2xl font-bold text-red-500">
          🍔jointBuddy
        </div>
@@ -112,17 +111,14 @@ const MapContainer = () => {
        </div>
      </header>
 
-     <div className={`flex flex-1 flex-col md:flex-row transition-all duration-300 ${
-  isModalOpen ? 'lg:mr-[28rem]' : ''
-}`}>
-
-
-     {/* Map and Sidebar */}
-     <div className="flex flex-1 overflow-hidden">
-       {/* Map section - Left side */}
-       <div className="flex-1 relative">
-
-        {/* Filter Bar - positioned inside map container */}
+     {/* Main Content - Takes remaining height */}
+     <div className={`flex flex-1 transition-all duration-300 overflow-hidden ${
+       isModalOpen ? 'lg:mr-[28rem]' : ''
+     }`}>
+       
+       {/* Map section - Fixed height */}
+       <div className="flex-1 relative h-full">
+         {/* Filter Bar */}
          <FilterBar 
            selectedCuisine={filters.cuisine}
            onCuisineChange={(cuisine) => setFilters(prev => ({ ...prev, cuisine }))} 
@@ -134,6 +130,7 @@ const MapContainer = () => {
            </div>
          )}
 
+         {/* Map Container - FIXED HEIGHT */}
          <div
            ref={mapCallbackRef}
            className="w-full h-full"
@@ -167,26 +164,26 @@ const MapContainer = () => {
          )}
 
          {restaurants.length > 0 && (
-           <div className="absolute top-4 left-4 bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded z-10">
-             🍽️ Found {filteredRestaurants.length} restaurants nearby
+           <div className="absolute top-4 left-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg z-10 animate-slide-in">
+             <div className="flex items-center gap-2">
+               <span>🍽️</span>
+               <span>Found {restaurants.length} restaurants nearby</span>
+             </div>
            </div>
          )}
        </div>
 
-         <div className={`w-full md:w-96 order-1 md:order-2 max-h-64 md:max-h-none overflow-y-auto transition-all duration-300 ${
-          isModalOpen ? 'md:opacity-75' : 'md:opacity-100'
-          }`}>
-
-
-       {/* Sidebar - Right side */}
-       <RestaurantSidebar
-         restaurants={filteredRestaurants}
-         onRestaurantClick={onRestaurantClick}
-         selectedRestaurantId={selectedRestaurantId}
-         map={map}
-       />
-     </div>
-     </div>
+       {/* Sidebar - Fixed height with scroll */}
+       <div className={`w-full md:w-96 h-full overflow-y-auto transition-all duration-300 ${
+         isModalOpen ? 'md:opacity-75' : 'md:opacity-100'
+       }`}>
+         <RestaurantSidebar
+           restaurants={filteredRestaurants}
+           onRestaurantClick={onRestaurantClick}
+           selectedRestaurantId={selectedRestaurantId}
+           map={map}
+         />
+       </div>
      </div>
 
      {/* Restaurant Details Modal */}
