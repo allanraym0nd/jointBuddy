@@ -92,7 +92,7 @@ const MapContainer = () => {
  }
 
  return (
-   <div className="flex flex-col h-screen">
+   <div className="flex flex-col  h-screen">
      {/* Header */}
      <header className="bg-white px-6 py-4 shadow-lg flex items-center justify-between">
        <div className="flex items-center gap-2 text-2xl font-bold text-red-500">
@@ -111,6 +111,10 @@ const MapContainer = () => {
          </button>
        </div>
      </header>
+
+     <div className={`flex flex-1 flex-col md:flex-row transition-all duration-300 ${
+  isModalOpen ? 'lg:mr-[28rem]' : ''
+}`}>
 
 
      {/* Map and Sidebar */}
@@ -169,6 +173,11 @@ const MapContainer = () => {
          )}
        </div>
 
+         <div className={`w-full md:w-96 order-1 md:order-2 max-h-64 md:max-h-none overflow-y-auto transition-all duration-300 ${
+          isModalOpen ? 'md:opacity-75' : 'md:opacity-100'
+          }`}>
+
+
        {/* Sidebar - Right side */}
        <RestaurantSidebar
          restaurants={filteredRestaurants}
@@ -176,6 +185,8 @@ const MapContainer = () => {
          selectedRestaurantId={selectedRestaurantId}
          map={map}
        />
+     </div>
+     </div>
      </div>
 
      {/* Restaurant Details Modal */}
