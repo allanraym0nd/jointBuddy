@@ -18,7 +18,8 @@ export const useGoogleMaps = (userLocation, options = {}) => {
     zoom: 13,
     mapTypeControl: false,
     streetViewControl: false,
-    fullscreenControl: false,
+    fullscreenControl: false,  
+    disableDefaultUI: true,
     ...options
   }
 
