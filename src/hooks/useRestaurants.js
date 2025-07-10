@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect,useCallback } from 'react'
+
+const GOOGLE_PLACES_API_KEY = process.env.VITE_GOOGLE_PLACES_API_KEY
+const PLACES_BASE_URL = 'https://maps.googleapis.com/maps/api/place'
+
 
 export const useRestaurants = (userLocation) => {
   const [restaurants, setRestaurants] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [cache,setCache] = useState(null)
 
 
   const restaurantTypes = [
@@ -19,18 +24,20 @@ export const useRestaurants = (userLocation) => {
     { name: "Pasta Paradise", cuisine: "Italian", rating: 4.0, priceLevel: 2 }
   ]
 
+  // Function to generate random coordinates near user location
   const generateNearbyCoordinates = (centerLat, centerLng, radiusInMiles = 1) => {
-   
-    const radiusInDegrees = radiusInMiles / 69 
+    // Convert miles to degrees (rough approximation)
+    const radiusInDegrees = radiusInMiles / 69 // 1 degree ≈ 69 miles
     
+    // Generate random angle and distance
     const angle = Math.random() * 2 * Math.PI
     const distance = Math.random() * radiusInDegrees
     
- 
+    // Calculate new coordinates
     const lat = centerLat + (distance * Math.cos(angle))
     const lng = centerLng + (distance * Math.sin(angle))
     
-    return { lat, lng } // random coordinates near users location
+    return { lat, lng }
   }
 
 
