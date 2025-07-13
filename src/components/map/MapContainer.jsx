@@ -11,17 +11,10 @@ import SearchBar from "../common/SearchBar";
 import RestaurantDetailsModal from "../restaurants/RestaurantDetailsModal";
 import FilterBar from "../filters/FilterBar";
 
-const MapContainer = () => {
- const { location, loading: locationLoading, error: locationError, getCurrentLocation } = useLocation()
- const { map, loading: mapLoading, error: mapError, mapCallbackRef } = useGoogleMaps(location)
- 
- const {
-   restaurants,
-   loading: restaurantsLoading,
-   error: restaurantsError
- } = useRestaurants(location)
+const MapContainer = () => { 
 
- const [selectedRestaurantId, setSelectedRestaurantId] = useState(null)
+
+const [selectedRestaurantId, setSelectedRestaurantId] = useState(null)
  const [searchQuery, setSearchQuery] = useState('')
  const [selectedRestaurant, setSelectedRestaurant] = useState(null)
  const [isModalOpen, setIsModalOpen] = useState(false)
@@ -31,6 +24,18 @@ const MapContainer = () => {
         rating:0,
         maxDistance:5
  })
+
+
+ const { location, loading: locationLoading, error: locationError, getCurrentLocation } = useLocation()
+ const { map, loading: mapLoading, error: mapError, mapCallbackRef } = useGoogleMaps(location)
+ 
+ const {
+   restaurants,
+   loading: restaurantsLoading,
+   error: restaurantsError
+ } = useRestaurants(location)
+
+
 
   const filteredRestaurants = restaurants.filter(restaurant => {
     const matchesSearch = !searchQuery || searchQuery === '' || 
