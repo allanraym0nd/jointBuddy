@@ -1,40 +1,14 @@
-import { useState, useEffect,useCallback } from 'react'
-
-const GOOGLE_PLACES_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY
-const PLACES_BASE_URL = 'https://maps.googleapis.com/maps/api/place'
+import { useState, useEffect, useCallback } from 'react'
+import { supabase } from '../services/supabase' // your Supabase config
 
 export const useRestaurants = (userLocation, searchQuery = '', filters = {}) => {
   const [restaurants, setRestaurants] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [nextPageToken, setNextPageToken] = useState(null)
   const [hasMoreResults, setHasMoreResults] = useState(false)
 
   // Cache to avoid repeated API calls
   const [cache, setCache] = useState(new Map())
-
-  // Helper function to handle API responses
-  const handleApiResponse = async (response) => {
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`)
-    }
-    
-    const data = await response.json()
-    
-    if (data.status === 'REQUEST_DENIED') {
-      throw new Error('API Key invalid or Places API not enabled')
-    }
-    
-    if (data.status === 'OVER_QUERY_LIMIT') {
-      throw new Error('API quota exceeded. Please try again later.')
-    }
-    
-    if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-      throw new Error(`Google Places API Error: ${data.status}`)
-    }
-    
-    return data
-  }
 
   // Your existing distance calculation function (keeping it the same)
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
@@ -49,74 +23,37 @@ export const useRestaurants = (userLocation, searchQuery = '', filters = {}) => 
     return Math.round(distance * 10) / 10
   }
 
-  // Get restaurant photo URL
-  const getRestaurantPhotoUrl = (photoReference, maxWidth = 400) => {
-    if (!photoReference) return `https://picsum.photos/400/300?random=${Math.random()}`
-    
-    return `${PLACES_BASE_URL}/photo?photoreference=${photoReference}&maxwidth=${maxWidth}&key=${GOOGLE_PLACES_API_KEY}`
-  }
-
-  // Transform Google Places data to match your existing format
+  // Transform Edge Function data to match your existing format
   const transformRestaurantData = (place, userLat, userLng) => {
-    const cuisine = getCuisineFromTypes(place.types)
     const distance = calculateDistance(
       userLat, 
       userLng, 
-      place.geometry.location.lat, 
-      place.geometry.location.lng
+      place.location.lat, 
+      place.location.lng
     )
 
     return {
-      id: place.place_id,
+      id: place.id,
       name: place.name,
-      cuisine: cuisine,
+      cuisine: place.cuisine,
       rating: place.rating || 0,
-      priceLevel: place.price_level || 1,
+      priceLevel: place.priceLevel || 1,
       coordinates: {
-        lat: place.geometry.location.lat,
-        lng: place.geometry.location.lng
+        lat: place.location.lat,
+        lng: place.location.lng
       },
       distance: distance,
-      address: place.formatted_address || place.vicinity,
-      phone: place.formatted_phone_number || 'Not available',
-      isOpen: place.opening_hours ? place.opening_hours.open_now : true,
-      photoUrl: place.photos ? getRestaurantPhotoUrl(place.photos[0].photo_reference) : `https://picsum.photos/400/300?random=${Math.random()}`,
-      // Additional real data
-      website: place.website || null,
-      reviews: place.reviews || [],
-      openingHours: place.opening_hours ? place.opening_hours.weekday_text : null
+      address: place.address,
+      phone: place.phone || 'Not available',
+      isOpen: true, // Edge function doesn't return opening hours yet
+      photoUrl: place.image || `https://picsum.photos/400/300?random=${Math.random()}`,
+      website: null,
+      reviews: [],
+      openingHours: null
     }
   }
 
-  // Helper function to determine cuisine type from Google Places types
-  const getCuisineFromTypes = (types) => {
-    const cuisineMap = {
-      'chinese_restaurant': 'Chinese',
-      'italian_restaurant': 'Italian',
-      'japanese_restaurant': 'Japanese',
-      'indian_restaurant': 'Indian',
-      'mexican_restaurant': 'Mexican',
-      'thai_restaurant': 'Thai',
-      'french_restaurant': 'French',
-      'american_restaurant': 'American',
-      'pizza_restaurant': 'Pizza',
-      'seafood_restaurant': 'Seafood',
-      'steakhouse': 'Steakhouse',
-      'fast_food_restaurant': 'Fast Food',
-      'cafe': 'Cafe',
-      'bakery': 'Bakery'
-    }
-    
-    for (const type of types) {
-      if (cuisineMap[type]) {
-        return cuisineMap[type]
-      }
-    }
-    
-    return 'Restaurant'
-  }
-
-  // Main function to load restaurants
+  // Main function to load restaurants using Supabase Edge Function
   const loadRestaurants = useCallback(async (location, query = '') => {
     if (!location) return
 
@@ -128,11 +65,9 @@ export const useRestaurants = (userLocation, searchQuery = '', filters = {}) => 
       const cachedData = cache.get(cacheKey)
       const now = Date.now()
       
-      // Use cached data if less than 5 minutes old
       if (now - cachedData.timestamp < 5 * 60 * 1000) {
         setRestaurants(cachedData.restaurants)
-        setNextPageToken(cachedData.nextPageToken)
-        setHasMoreResults(!!cachedData.nextPageToken)
+        setHasMoreResults(false) // Edge function doesn't support pagination yet
         return
       }
     }
@@ -141,30 +76,22 @@ export const useRestaurants = (userLocation, searchQuery = '', filters = {}) => 
     setError(null)
 
     try {
-      let url
-      const params = new URLSearchParams({
-        key: GOOGLE_PLACES_API_KEY
+      // Call your Supabase Edge Function instead of Google directly
+      const { data, error: functionError } = await supabase.functions.invoke('get-restaurants', {
+        body: {
+          lat: location.lat.toString(),
+          lng: location.lng.toString(),
+          radius: filters.radius || '2000',
+          query: query // for future text search implementation
+        }
       })
 
-      if (query.trim()) {
-        // Text search for specific restaurant/cuisine
-        url = `${PLACES_BASE_URL}/textsearch/json`
-        params.append('query', `${query} restaurant`)
-        params.append('location', `${location.lat},${location.lng}`)
-        params.append('radius', '5000') // 5km radius
-      } else {
-        // Nearby search for restaurants
-        url = `${PLACES_BASE_URL}/nearbysearch/json`
-        params.append('location', `${location.lat},${location.lng}`)
-        params.append('radius', filters.radius || '2000') // 2km default
-        params.append('type', 'restaurant')
+      if (functionError) {
+        throw new Error(functionError.message || 'Failed to fetch restaurants')
       }
 
-      const response = await fetch(`${url}?${params}`)
-      const data = await handleApiResponse(response)
-
-      if (data.results && data.results.length > 0) {
-        const transformedRestaurants = data.results.map(place => 
+      if (data && data.restaurants && data.restaurants.length > 0) {
+        const transformedRestaurants = data.restaurants.map(place => 
           transformRestaurantData(place, location.lat, location.lng)
         )
 
@@ -172,34 +99,29 @@ export const useRestaurants = (userLocation, searchQuery = '', filters = {}) => 
         const sortedRestaurants = transformedRestaurants.sort((a, b) => a.distance - b.distance)
 
         setRestaurants(sortedRestaurants)
-        setNextPageToken(data.next_page_token)
-        setHasMoreResults(!!data.next_page_token)
+        setHasMoreResults(false) // No pagination from Edge Function yet
 
         // Cache the results
         setCache(prev => new Map(prev.set(cacheKey, {
           restaurants: sortedRestaurants,
-          nextPageToken: data.next_page_token,
           timestamp: Date.now()
         })))
 
-        console.log('🍽️ Loaded real restaurants:', sortedRestaurants.length)
+        console.log('🍽️ Loaded real restaurants from Edge Function:', sortedRestaurants.length)
       } else {
         setRestaurants([])
-        setNextPageToken(null)
         setHasMoreResults(false)
-        console.log('🍽️ No restaurants found')
+        console.log('🍽️ No restaurants found from Edge Function')
       }
 
     } catch (err) {
-      console.error('Error loading restaurants:', err)
+      console.error('Error loading restaurants from Edge Function:', err)
       setError(err.message || 'Failed to load restaurants')
       
-      // Fallback to mock data on error (optional)
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🍽️ Falling back to mock data...')
-        const mockRestaurants = generateMockRestaurants(location.lat, location.lng)
-        setRestaurants(mockRestaurants)
-      }
+      // Fallback to mock data on error
+      console.log('🍽️ Falling back to mock data...')
+      const mockRestaurants = generateMockRestaurants(location.lat, location.lng)
+      setRestaurants(mockRestaurants)
     } finally {
       setLoading(false)
     }
@@ -264,43 +186,11 @@ export const useRestaurants = (userLocation, searchQuery = '', filters = {}) => 
     return () => clearTimeout(timeoutId)
   }, [userLocation, searchQuery, loadRestaurants])
 
-  // Function to load more results (pagination)
-  const loadMore = useCallback(async () => {
-    if (!hasMoreResults || loading || !nextPageToken) return
-
-    setLoading(true)
-    try {
-      // Google requires a short delay before using next_page_token
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      const response = await fetch(
-        `${PLACES_BASE_URL}/nearbysearch/json?pagetoken=${nextPageToken}&key=${GOOGLE_PLACES_API_KEY}`
-      )
-      
-      const data = await handleApiResponse(response)
-      
-      if (data.results && data.results.length > 0) {
-        const newRestaurants = data.results.map(place => 
-          transformRestaurantData(place, userLocation.lat, userLocation.lng)
-        )
-
-        setRestaurants(prev => [...prev, ...newRestaurants])
-        setNextPageToken(data.next_page_token)
-        setHasMoreResults(!!data.next_page_token)
-      }
-    } catch (err) {
-      setError('Failed to load more restaurants')
-    } finally {
-      setLoading(false)
-    }
-  }, [hasMoreResults, loading, nextPageToken, userLocation])
-
   return {
     restaurants,
     loading,
     error,
     hasMoreResults,
-    loadMore,
     reload: () => loadRestaurants(userLocation, searchQuery)
   }
 }
