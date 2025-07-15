@@ -9,6 +9,7 @@ export const useRestaurants = (userLocation, searchQuery = '', filters = {}) => 
 
   // Cache to avoid repeated API calls
   const [cache, setCache] = useState(new Map())
+  
 
   // Your existing distance calculation function (keeping it the same)
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
