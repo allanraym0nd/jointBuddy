@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@googlemaps/react-wrapper": "^1.2.0",
-    "@supabase/supabase-js": "github:supabase/supabase-js",
+    "@supabase/supabase-js": "^2.51.0",
     "@tailwindcss/vite": "^4.1.10",
     "lucide-react": "^0.522.0",
     "react": "^19.1.0",
