@@ -11,7 +11,7 @@ const RestaurantSidebar = ({ restaurants, onRestaurantClick, selectedRestaurantI
           Your buddy found {restaurants.length} spots nearby! 🎉
         </h2>
         <p className="text-sm text-gray-600">
-          Within 2 miles of Downtown Seattle
+          Within 2 miles of your location
         </p>
       </div>
       
