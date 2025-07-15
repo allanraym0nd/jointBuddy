@@ -1,23 +1,30 @@
 import { useState } from 'react'
-// import Header from './components/common/Header'
+import { useAuth } from './hooks/useAuth'  // You'll need to create this hook
+import Auth from './pages/Auth'
 import MapContainer from './components/map/MapContainer'
 
 function App() {
-  
-  return (
-      // <div className="h-screen flex flex-col">
-      // <Header />
+  const { user, loading } = useAuth()
 
-      <main className="flex-1 flex">
-        <div className="flex-1">
-          <MapContainer />
-        </div>
-          </main>
-      // </div>
-  
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Auth />
+  }
+
+  return (
+    <main className="flex-1 flex">
+      <div className="flex-1">
+        <MapContainer />
+      </div>
+    </main>
   )
 }
 
 export default App
-
-
