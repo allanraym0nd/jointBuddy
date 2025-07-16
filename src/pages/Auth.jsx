@@ -47,7 +47,7 @@ const Auth = () => {
             <h1 className="text-3xl font-bold text-gray-900">jointBuddy</h1>
           </div>
           <h2 className="text-xl text-gray-600">
-            {isLogin ? 'Welcome back!' : 'Join the food adventure'}
+            {isLogin ? 'Welcome!' : 'Join the food adventure'}
           </h2>
           <p className="mt-2 text-sm text-gray-500">
             {isLogin 
